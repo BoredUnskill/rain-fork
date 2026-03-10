@@ -5,21 +5,327 @@
     <meta property="og:image" content="./social.jpg" />
     <title>Rainy Window</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" href="styles/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+      /* Reset margins and disable scrolling */
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+
+      #season {
+        transition: opacity 0.3s ease;
+      }
+      #container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        animation: breathe 15s infinite alternate;
+      }
+
+      @keyframes breathe {
+        0% { filter: brightness(100%) contrast(100%); }
+        100% { filter: brightness(110%) contrast(110%); }
+      }
+
+      #clock-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 1000;
+        width: 100%;
+      }
+      
+      /* Приветствие */
+      #greeting {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 400;
+        font-size: 24px;
+        color: var(--primary-color);
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fadeIn 1s ease 0.5s forwards;
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+      
+      @keyframes fadeIn {
+        to { opacity: 1; }
+      }
+      
+      #time {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 72px;
+        color: var(--primary-color);
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+      
+      #date {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 18px;
+        color: var(--secondary-color);
+        letter-spacing: 1px;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+      
+      #season {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 16px;
+        color: var(--secondary-color);
+        letter-spacing: 1px;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        margin-top: 8px;
+        font-style: italic;
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+
+      /* === НОВЫЙ СТИЛЬ ДЛЯ ЛОКАЦИИ === */
+      #location {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 16px;
+        color: var(--secondary-color);
+        letter-spacing: 1px;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        margin-top: 4px;
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+
+      #location:hover {
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        color: white;
+      }
+
+      /* Эффекты при наведении */
+      #greeting:hover {
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+        transform: scale(1.05);
+      }
+      
+      #time:hover {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+        transform: scale(1.03);
+      }
+      
+      #date:hover {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        color: white;
+      }
+      
+      #season:hover {
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        color: white;
+      }
+
+      /* Прогресс дня */
+      #day-progress-container {
+        width: 80%;
+        max-width: 300px;
+        height: 6px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        margin: 15px auto 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      #day-progress-bar {
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 3px;
+        width: 0%;
+        transition: all 0.5s ease;
+      }
+
+      #day-progress-text {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        margin-top: 5px;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+
+      /* Эффекты прогресса дня при наведении */
+      #day-progress-container:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+      
+      #day-progress-container:hover #day-progress-bar {
+        background-color: white;
+      }
+      
+      #day-progress-text:hover {
+        color: white;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+      }
+
+      /* Блок с цитатой */
+      #quote-container {
+        position: fixed;
+        bottom: 30px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        z-index: 1000;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      #quote-text {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
+        margin: 0 auto;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+        line-height: 1.5;
+        opacity: 0;
+        transition: all 1s ease;
+        cursor: default;
+      }
+
+      #quote-text.show {
+        opacity: 1;
+      }
+
+      /* Эффект при наведении на цитату */
+      #quote-text:hover {
+        color: white;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        transform: scale(1.02);
+      }
+
+      /* Информация о системе */
+      #system-info {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        text-align: center;
+        margin-bottom: 10px;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        cursor: default;
+      }
+
+      #system-info:hover {
+        color: white;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+      }
+
+      /* Прогресс-бар загрузки */
+      #progressbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.1);
+        z-index: 9999;
+      }
+
+      #progressbar .indeterminate-progress-bar__progress {
+        height: 100%;
+        background-color: white;
+        width: 50%;
+        animation: progress 2s linear infinite;
+      }
+
+      @keyframes progress {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(200%); }
+      }
+
+      /* Скрываем input */
+      #filePicker {
+        position: absolute;
+        opacity: 0;
+        z-index: -1;
+      }
+
+      /* Капли при клике */
+      .raindrop-click {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        animation: dropFall 2s linear forwards;
+        z-index: 1001;
+      }
+
+      @keyframes dropFall {
+        0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        100% { transform: translate(-50%, 100px) scale(0.5); opacity: 0; }
+      }
+
+      /* Переменные для сезонных цветов */
+      :root {
+        --primary-color: white;
+        --secondary-color: rgba(255, 255, 255, 0.8);
+      }
+    </style>
   </head>
   <body>
     <div id="container"></div>
-    <input id="filePicker" type="file" accept=".jpg, .jpeg, .png, .mp4, .webm" style="visibility: hidden" />
+    <input id="filePicker" type="file" accept=".jpg, .jpeg, .png, .mp4, .webm" />
 
     <div id="progressbar" class="indeterminate-progress-bar">
       <div class="indeterminate-progress-bar__progress"></div>
+    </div>
+
+    <div id="clock-container">
+      <div id="greeting"></div>
+      <div id="time"></div>
+      <div id="date"></div>
+      <div id="season"></div>
+      
+      <!-- ===== ДОБАВЛЕН НОВЫЙ ЭЛЕМЕНТ ДЛЯ ЛОКАЦИИ ===== -->
+      <div id="location"></div>
+      
+      <div id="day-progress-container">
+        <div id="day-progress-bar"></div>
+      </div>
+      <div id="day-progress-text"></div>
+    </div>
+
+    <!-- Блок с цитатой -->
+    <div id="quote-container">
+      <div id="system-info"></div>
+      <div id="quote-text"></div>
     </div>
 
     <script src="js/dat.gui.min.js"></script>
     <script src="js/three.min.js"></script>
     <script src="js/script.js"></script>
     <script>
-      //threejs scene first run
+      // Инициализация Three.js сцены
       let background = document.getElementById("container");
       const progress = document.getElementById("progressbar");
       document.addEventListener("sceneLoaded", () => {
@@ -33,6 +339,338 @@
           await new Promise((r) => setTimeout(r, 75));
         }
       }
+      
+      // 1. Эффект "капли на стекле" при клике
+      document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('container');
+        
+        container.addEventListener('click', (e) => {
+          const drop = document.createElement('div');
+          drop.className = 'raindrop-click';
+          drop.style.left = `${e.clientX}px`;
+          drop.style.top = `${e.clientY}px`;
+          container.appendChild(drop);
+          
+          setTimeout(() => {
+            drop.remove();
+          }, 2000);
+        });
+      });
+      
+      // Определение текущего сезона (МЕТЕОРОЛОГИЧЕСКОЕ)
+      function getSeason(date) {
+        const month = date.getMonth() + 1;
+        // Метеорологические сезоны (начало месяца)
+        if (month === 12 || month <= 2) return "❄️ Winter";
+        if (month >= 3 && month <= 5) return "🌸 Spring";
+        if (month >= 6 && month <= 8) return "☀️ Summer";
+        return "🍂 Autumn";
+      }
+      
+      // 3. Сезонные цветовые схемы
+      function applySeasonalColors(season) {
+        const colors = {
+          '❄️ Winter': { primary: '#e6f7ff', secondary: '#a8d8ea' },
+          '🌸 Spring': { primary: '#ffebee', secondary: '#ffcdd2' },
+          '☀️ Summer': { primary: '#fff8e1', secondary: '#ffecb3' },
+          '🍂 Autumn': { primary: '#fff3e0', secondary: '#ffe0b2' }
+        };
+        
+        document.documentElement.style.setProperty('--primary-color', colors[season].primary);
+        document.documentElement.style.setProperty('--secondary-color', colors[season].secondary);
+      }
+      
+      // 4. Погодные иконки в зависимости от времени суток
+      function getTimeOfDayIcon(hours) {
+        if (hours >= 5 && hours < 10) return '🌅';
+        if (hours >= 10 && hours < 18) return '☀️';
+        if (hours >= 18 && hours < 22) return '🌇';
+        return '🌙';
+      }
+      
+      // Получение приветствия по времени суток
+      function getGreeting(hours) {
+        if (hours >= 5 && hours < 12) return "Good morning!";
+        if (hours >= 12 && hours < 18) return "Good afternoon!";
+        if (hours >= 18 && hours < 22) return "Good evening!";
+        return "Good night!";
+      }
+
+      // Определение операционной системы
+      function getOS() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        if (/windows phone/i.test(userAgent)) return "Windows Phone";
+        if (/android/i.test(userAgent)) return "Android";
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) return "iOS";
+        if (/win/i.test(userAgent)) return "Windows";
+        if (/mac/i.test(userAgent)) return "MacOS";
+        if (/linux/i.test(userAgent)) return "Linux";
+        if (/cros/i.test(userAgent)) return "Chrome OS";
+        
+        return "Unknown OS";
+      }
+
+      // Глобальный кеш местоположения
+      let cachedLocation = { country: null, city: null };
+
+      // Получение страны и города пользователя
+      async function getUserLocation() {
+          try {
+              const response = await fetch('https://api.ip.sb/geoip');
+              const data = await response.json();
+              return {
+                  country: data.country || null,
+                  city: data.city || null
+              };
+          } catch (error) {
+              console.error('Error:', error);
+              return { country: null, city: null };
+          }
+      }
+
+      // Функция получения и кеширования местоположения
+      async function fetchAndCacheLocation() {
+          try {
+              const location = await getUserLocation();
+              cachedLocation = location;
+              return location;
+          } catch (error) {
+              console.error('Failed to fetch location', error);
+              return { country: null, city: null };
+          }
+      }
+
+      // Обновление информации о системе
+      function updateSystemInfo() {
+          const os = getOS();
+          document.getElementById("system-info").textContent = `Running on ${os}`;
+      }
+
+      // Коллекция цитат и фактов
+      const quotes = [
+        "The only way to do great work is to love what you do. — Steve Jobs",
+          "In the middle of every difficulty lies opportunity. — Albert Einstein",
+          "The human brain has enough memory to hold 3 million hours of TV shows.",
+          "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly good to eat.",
+          "You miss 100% of the shots you don't take. — Wayne Gretzky",
+          "The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.",
+          "Bananas are berries, but strawberries aren't.",
+          "The world's oldest piece of chewing gum is over 9,000 years old.",
+          "A day on Venus is longer than a year on Venus.",
+          "Octopuses have three hearts, nine brains, and blue blood.",
+          "The future belongs to those who believe in the beauty of their dreams. — Eleanor Roosevelt",
+          "Success is not final, failure is not fatal: It is the courage to continue that counts. — Winston Churchill",
+          "Do what you can, with what you have, where you are. — Theodore Roosevelt",
+          "Your time is limited, don't waste it living someone else's life. — Steve Jobs",
+          "The only limit to our realization of tomorrow is our doubts of today. — Franklin D. Roosevelt",
+          "On Mercury, one day (from sunrise to sunrise) lasts 176 Earth days!",
+          "Octopus blood is blue due to the copper in its composition.",
+          "Honey never spoils - edible honey 3000 years old has been found in Egyptian tombs.",
+          "Venus is the only planet that rotates clockwise.",
+          "It's impossible to sneeze with your eyes open.",
+          "A single tree produces about 260 pounds of oxygen per year.",
+          "A blue whale's heart is the size of a car.",
+          "Water covers 71% of Earth, but only 3% of it is fresh.",
+          "Sunlight takes 8 minutes and 20 seconds to reach Earth.",
+          "The pressure in the Mariana Trench is 1000 times greater than at the surface.",
+          "We don't see things as they are, we see them as we are. — Anaïs Nin",
+          "The journey of a thousand miles begins with one step. — Lao Tzu",
+          "Happiness is not something ready-made. It comes from your own actions. — Dalai Lama",
+          "The best way to predict the future is to invent it. — Alan Kay",
+          "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
+          "Human DNA is 50% identical to banana DNA.",
+          "Your body contains 10 times more bacteria than human cells.",
+          "The atoms in your body were once part of stars.",
+          "A teaspoon of neutron star material weighs 6 billion tons.",
+          "Quantum entanglement allows particles to instantly affect each other.",
+          "Life is what happens when you're busy making other plans. — John Lennon",
+          "The purpose of our lives is to be happy. — Dalai Lama",
+          "Get busy living or get busy dying. — Stephen King",
+          "You only live once, but if you do it right, once is enough. — Mae West",
+          "Life is really simple, but we insist on making it complicated. — Confucius",
+          "The Moon has 'moonquakes' - weak analogues of earthquakes.",
+          "Saturn could float in water (if we could find a large enough ocean).",
+          "There is no sound in space - it's absolute silence.",
+          "Astronauts' footprints on the Moon will remain there for millions of years.",
+          "About 100 tons of cosmic dust falls to Earth every day.",
+          "Every artist was first an amateur. — Ralph Waldo Emerson",
+          "Creativity takes courage. — Henri Matisse",
+          "Art is the lie that enables us to realize the truth. — Pablo Picasso",
+          "The only time I feel alive is when I'm painting. — Vincent van Gogh",
+          "Imagination is more important than knowledge. — Albert Einstein",
+          "Crocodiles can't stick out their tongues.",
+          "Snails can sleep for up to 3 years.",
+          "Penguins can jump up to 2 meters high.",
+          "A hedgehog's heart beats 300 times per minute.",
+          "Octopuses have three hearts and nine brains.",
+          "Talk is cheap. Show me the code. — Linus Torvalds",
+          "Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program. — Linus Torvalds",
+          "Software is like sex: it's better when it's free. — Linus Torvalds",
+          "Intelligence is the ability to avoid doing work, yet getting the work done. — Linus Torvalds",
+          "Your most unhappy customers are your greatest source of learning. — Bill Gates",
+          "It's fine to celebrate success, but it is more important to heed the lessons of failure. — Bill Gates",
+          "If you are born poor, it's not your mistake. But if you die poor, it's your mistake. — Bill Gates",
+          "The computer was born to solve problems that did not exist before. — Bill Gates",
+          "God said the 640x480 resolution and 16 colors were perfect, so that's what I used. — Terry Davis",
+          "I don't believe in open source. I believe in God's source. — Terry Davis",
+          "I wrote an operating system, and I did it alone, because God told me to. — Terry Davis",
+          "The CIA is after me, but God protects me. — Terry Davis",
+          "Free software is a matter of liberty, not price. — Richard Stallman",
+          "Sharing is good, and with digital technology, sharing is easy. — Richard Stallman",
+          "Proprietary software is an injustice. — Richard Stallman",
+          "The idea of copyright did not exist in ancient times, when authors frequently copied other authors at length in works of non-fiction. — Richard Stallman",
+          "The Linux mascot, Tux the penguin, was chosen because Linus Torvalds was once bitten by a penguin at a zoo.",
+          "Linux runs on all of the world's top 500 supercomputers (as of 2023).",
+          "Android is powered by the Linux kernel - making Linux the most widely used OS in the world.",
+          "The first Linux release (0.01) in 1991 was just 65 KB in size.",
+          "Windows 95's default wallpaper (Bliss) was an actual unedited photo of California wine country.",
+          "The infamous 'Blue Screen of Death' in Windows 95/98 was actually a debug screen left intentionally.",
+          "Microsoft's Windows XP was codenamed 'Whistler' after the Whistler ski resort in Canada.",
+          "Windows 10 has about 50 million lines of code - more than 5 times Windows XP.",
+          "MacOS's Unix foundation dates back to NeXTSTEP, the OS Steve Jobs developed during his Apple exile.",
+          "The macOS dock was inspired by the NeXTSTEP 'shelf' from Jobs's NeXT computers.",
+          "Early versions of MacOS had Easter eggs showing the development team's photos.",
+          "MacOS and iOS share the same Darwin kernel foundation.",
+          "The first iPhone OS (now iOS) didn't support third-party apps until version 2.0.",
+          "iOS is actually a variant of MacOS, adapted for touch interfaces.",
+          "The iPhone's original codename was 'Purple 2' - referencing Apple's secret project room.",
+          "iOS processes over 100,000 facial recognition points for FaceID authentication.",
+          "Android was originally developed by Android Inc. (founded 2003) before Google acquired it in 2005.",
+          "Early Android prototypes used physical keyboards before Apple's iPhone changed the game.",
+          "Android version names are alphabetical dessert names (KitKat, Oreo, Pie, etc.).",
+          "Google's Pixel phones run the most 'pure' Android version without manufacturer modifications.",
+          "FreeBSD's mascot is the BSD Daemon - a cute red devil with a pitchfork.",
+          "PlayStation 4's Orbis OS is based on FreeBSD 9.",
+          "FreeBSD's networking stack is considered one of the most robust and is used in high-performance applications.",
+          "WhatsApp initially ran on FreeBSD servers before being acquired by Facebook.",
+          "The first graphical user interface (GUI) was developed at Xerox PARC, not Apple or Microsoft.",
+          "UNIX (created in 1969) inspired nearly all modern operating systems including Linux and MacOS.",
+          "The 'sudo' command stands for 'superuser do' and was first introduced in 1980.",
+          "Early computers didn't have operating systems - each program had to manage hardware itself.",
+          "The concept of 'time-sharing' in the 1960s led to the development of modern multitasking OSes.",
+          "The Magnavox Odyssey (1972) was the first commercial home video game console and used analog circuits - no microprocessor.",
+          "Atari 2600's best-selling game Pac-Man was so poorly ported that only 50% of the dots were visible on screen at once.",
+          "Nintendo's NES had a special chip (10NES) that acted as DRM - preventing unlicensed games from running.",
+          "Sega Genesis/Mega Drive was originally going to be called the 'Mark V' as successor to their 8-bit 'Master System'.",
+          "The Sony PlayStation was originally a Nintendo collaboration project that was canceled (codenamed 'Nintendo Play Station').",
+          "Nintendo 64's controller was designed with three prongs to symbolize Mario jumping - left, middle, right paths.",
+          "Dreamcast was the first console with a built-in modem for online play (33.6kbps) and web browsing.",
+          "Original Xbox's giant controller was nicknamed 'The Duke' and was later replaced due to complaints.",
+          "PS2's Emotion Engine CPU was so powerful for 2000 that it was used in missile guidance systems.",
+          "GameCube discs were 8cm mini-DVDs specifically designed to prevent piracy and reduce loading times.",
+          "PS5's DualSense controller has adaptive triggers that can simulate different resistance levels for weapons/bows.",
+          "Xbox Series X's cooling system has a special vapor chamber - making it Microsoft's quietest console ever.",
+          "Nintendo Switch Joy-Cons have IR cameras that can detect hand gestures and measure pulse (via reflected light).",
+          "Steam Deck runs a custom Linux OS called SteamOS 3.0 with Proton compatibility layer for Windows games.",
+          "Meta Quest VR headsets use Android as their base operating system with custom VR modifications.",
+          "The Nintendo Wii's motion controls were originally developed for military training simulations.",
+          "Atari Jaguar (1993) claimed to be '64-bit' but actually used multiple 16/32-bit chips working together.",
+          "PS Vita's rear touchpad was so innovative that no other major handheld has replicated the feature.",
+          "Xbox 360's 'Red Ring of Death' was caused by solder joints cracking under heat stress - costing Microsoft $1B+.",
+          "Nintendo 3DS uses parallax barrier tech for glasses-free 3D - the same method used in some medical displays.",
+          "PS2 remains the best-selling console of all time (155M+ units) thanks to its 13-year production run.",
+          "Wii Sports is the best-selling single-platform game ever (82M copies) - bundled with every Wii console.",
+          "Sega's 'Blast Processing' marketing term for Genesis was pure hype - the console had no special hardware feature.",
+          "Microsoft lost money on every original Xbox sold - the strategy was to establish market share for future generations.",
+          "Nintendo almost went bankrupt in the 1960s before shifting from playing cards to electronic toys and games.",
+          "The easiest way to stop piracy is not by putting antipiracy technology to work, but by giving those people a service that's better than what they're receiving from the pirates. — Gabe Newell",
+          "We think there are going to be people who build better content than we do, and that's fantastic. — Gabe Newell",
+          "The future is going to be about enabling communities and giving them tools to create and share. — Gabe Newell",
+          "I think that Linux and open source are the future of gaming. — Gabe Newell",
+          "The PC has been this open platform where anybody can compete. That's why it's been this amazing place for innovation. — Gabe Newell",
+          "We're way closer to The Matrix than people think. — Gabe Newell",
+          "The only reason we ended up doing Steam was because we were trying to make Half-Life 2 better. — Gabe Newell",
+          "If you're a platform provider, you should be creating value for everybody who's participating. — Gabe Newell"
+      ];
+
+      // Показ случайной цитаты
+      function showRandomQuote() {
+          const quoteElement = document.getElementById("quote-text");
+          // Плавное исчезновение
+          quoteElement.classList.remove("show");
+          
+          setTimeout(() => {
+              // Выбор случайной цитаты
+              const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+              quoteElement.textContent = randomQuote;
+              // Плавное появление
+              quoteElement.classList.add("show");
+          }, 500);
+      }
+      
+      // Обновление часов, даты и прогресса дня
+      function updateClock() {
+          const now = new Date();
+          const hours = now.getHours();
+          
+          // Обновление приветствия с иконкой
+          document.getElementById("greeting").textContent = 
+              `${getTimeOfDayIcon(hours)} ${getGreeting(hours)}`;
+          
+          // Время с постоянным двоеточием
+          const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                          now.getMinutes().toString().padStart(2, '0');
+          document.getElementById("time").textContent = timeStr;
+          
+          // Дата (день недели, число, месяц, год)
+          const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+          document.getElementById("date").textContent = now.toLocaleDateString('en-US', options);
+          
+          // Сезон и применение цветовой схемы
+          const season = getSeason(now);
+          applySeasonalColors(season);
+          
+          // ===== ИЗМЕНЕНИЕ 1: Отображаем только сезон =====
+          document.getElementById("season").textContent = season;
+          
+          // ===== ИЗМЕНЕНИЕ 2: Формируем строку с локацией =====
+          let locationText = "";
+          if (cachedLocation.country && cachedLocation.country !== 'Unknown country') {
+              locationText = cachedLocation.country;
+              if (cachedLocation.city) {
+                  locationText += `, ${cachedLocation.city}`;
+              }
+          } else {
+              locationText = "Location unknown";
+          }
+          
+          // ===== ИЗМЕНЕНИЕ 3: Выводим локацию в новый элемент =====
+          document.getElementById("location").textContent = locationText;
+          
+          // Прогресс дня (0:00 - 23:59)
+          const startOfDay = new Date(now);
+          startOfDay.setHours(0, 0, 0, 0);
+          
+          const endOfDay = new Date(now);
+          endOfDay.setHours(23, 59, 59, 999);
+          
+          const totalDayDuration = endOfDay - startOfDay;
+          const elapsedTime = now - startOfDay;
+          const progressPercent = (elapsedTime / totalDayDuration) * 100;
+          
+          document.getElementById("day-progress-bar").style.width = `${progressPercent}%`;
+          document.getElementById("day-progress-text").textContent = `${progressPercent.toFixed(1)}% of day passed`;
+      }
+
+      // Инициализация при загрузке
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Первоначальная загрузка местоположения
+        await fetchAndCacheLocation();
+        
+        // Первоначальное обновление часов
+        updateClock();
+        
+        // Запуск периодического обновления
+        setInterval(updateClock, 1000);
+        
+        // Показ первой цитаты
+        showRandomQuote();
+        setInterval(showRandomQuote, 30000);
+        
+        // Обновление информации о системе
+        updateSystemInfo();
+      });
     </script>
   </body>
 </html>

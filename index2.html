@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Окно с дождём</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #ffffff; /* Белый фон */
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        #container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3); /* Полупрозрачный белый */
+        }
+        
+        #clock-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #333333; /* Тёмный текст для контраста */
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        #time {
+            font-size: 72px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        #date {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        #weather {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="clock-container">
+        <div id="time">20:43</div>
+        <div id="date">суббота, 31 мая</div>
+        <div id="weather">
+            <span id="weather-icon">🌧️</span>
+            <span id="weather-text">Дождь, 14°С</span>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Инициализация сцены с эффектом дождя
+        function initRainScene() {
+            const container = document.getElementById('container');
+            
+            // Сцена
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff); // Белый фон
+            
+            // Камера
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // Рендерер
+            const renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true // Прозрачность для эффектов
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Создаём капли дождя
+            const rainGeometry = new THREE.BufferGeometry();
+            const rainCount = 1000;
+            
+            const positions = new Float32Array(rainCount * 3);
+            for (let i = 0; i < rainCount; i++) {
+                positions[i * 3] = Math.random() * 20 - 10;
+                positions[i * 3 + 1] = Math.random() * 20;
+                positions[i * 3 + 2] = Math.random() * 10 - 5;
+            }
+            
+            rainGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const rainMaterial = new THREE.PointsMaterial({
+                color: 0xaaaaaa,
+                size: 0.05,
+                transparent: true
+            });
+            
+            const rain = new THREE.Points(rainGeometry, rainMaterial);
+            scene.add(rain);
+            
+            // Анимация дождя
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Двигаем капли дождя
+                const positions = rain.geometry.attributes.position.array;
+                for (let i = 0; i < rainCount; i++) {
+                    positions[i * 3 + 1] -= 0.1;
+                    if (positions[i * 3 + 1] < -10) {
+                        positions[i * 3 + 1] = 10;
+                    }
+                }
+                rain.geometry.attributes.position.needsUpdate = true;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Обработка изменения размера окна
+            window.addEventListener('resize', function() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // Обновление времени и даты
+        function updateClock() {
+            const now = new Date();
+            
+            // Время
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+            
+            // Дата
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('date').textContent = now.toLocaleDateString('ru-RU', options);
+        }
+        
+        // Инициализация при загрузке
+        window.onload = function() {
+            initRainScene();
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+    </script>
+</body>
+</html>

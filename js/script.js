@@ -1,13 +1,10 @@
 const container = document.getElementById("container");
 let clock = new THREE.Clock();
 const gui = new dat.GUI();
-let isPaused = false,
-  elapsedResetTime = 21600,
-  elapsedPreviousTime = 0;
 let devicePixelRatio = window.devicePixelRatio || 1;
 
 let scene, camera, renderer, material;
-let settings = { fps: 30, scale: 1.0, parallaxVal: 1, parallaxStrength: 1, parallaxDistance: 90, parallaxDamp: 0.07 };
+let settings = { fps: 30, scale: 1.0, parallaxVal: 1 };
 let videoElement;
 
 //custom events
@@ -52,8 +49,8 @@ async function init() {
   material.fragmentShader = await (await fetch("shaders/rain.frag")).text();
   resize();
 
-  material.uniforms.u_tex0_resolution.value = new THREE.Vector2(1920, 1080);
-  material.uniforms.u_tex0.value = await new THREE.TextureLoader().loadAsync("media/image.webp");
+  // material.uniforms.u_tex0_resolution.value = new THREE.Vector2(1920, 1080);
+  // material.uniforms.u_tex0.value = await new THREE.TextureLoader().loadAsync("assets/temp_background.webp");
 
   const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 1, 1), material);
   scene.add(quad);
@@ -98,24 +95,10 @@ function render() {
   }, 1000 / settings.fps);
 
   //reset every 6hr
-  if (clock.getElapsedTime() > elapsedResetTime) clock = new THREE.Clock();
+  if (clock.getElapsedTime() > 21600) clock = new THREE.Clock();
   material.uniforms.u_time.value = clock.getElapsedTime();
 
   renderer.render(scene, camera);
-}
-
-function livelyWallpaperPlaybackChanged(data) {
-  var obj = JSON.parse(data);
-  isPaused = obj.IsPaused;
-
-  if (isPaused) {
-    elapsedPreviousTime = clock.getElapsedTime();
-    elapsedPreviousTime = elapsedPreviousTime > elapsedResetTime ? 0 : elapsedPreviousTime;
-    clock.stop();
-  } else {
-    clock.start();
-    clock.elapsedTime = elapsedPreviousTime;
-  }
 }
 
 init();
@@ -187,15 +170,6 @@ function livelyPropertyListener(name, val) {
     case "parallaxIntensity":
       settings.parallaxVal = val;
       break;
-    case "parallaxStrength":
-      settings.parallaxStrength = val;
-      break;
-    case "parallaxDistance":
-      settings.parallaxDistance = val;
-      break;
-    case "parallaxDamp":
-      settings.parallaxDamp = val;
-      break;
     case "fpsLock":
       settings.fps = val ? 30 : 60;
       break;
@@ -225,14 +199,14 @@ function datUI() {
   rain.add(material.uniforms.u_normal, "value", 0, 3, 0.01).name("Normal");
   rain.add(material.uniforms.u_zoom, "value", 0.1, 3.0, 0.01).name("Zoom");
   rain.add(material.uniforms.u_lightning, "value").name("Lightning");
-  bg.add(
-    {
-      picker: function () {
-        document.getElementById("filePicker").click();
-      },
-    },
-    "picker"
-  ).name("Change Background");
+  // bg.add(
+  //   {
+  //     picker: function () {
+  //       document.getElementById("filePicker").click();
+  //     },
+  //   },
+  //   "picker"
+  // ).name("Change Background");
   bg.add(material.uniforms.u_blur_iterations, "value", 1, 64, 1).name("Blur Quality");
   bg.add(material.uniforms.u_blur_intensity, "value", 0, 10, 0.01).name("Blur");
   bg.add(settings, "parallaxVal", 0, 5, 1).name("Parallax");
@@ -301,36 +275,15 @@ document.getElementById("filePicker").addEventListener("change", function () {
   }
 });
 
-// parallax
-if (settings.parallaxVal !== 0) {
+//parallax
+document.addEventListener("mousemove", function (event) {
+  if (settings.parallaxVal == 0) return;
 
-  let targetX = 0;
-  let targetY = 0;
-  let currentX = 0;
-  let currentY = 0;
+  const x = (window.innerWidth - event.pageX * settings.parallaxVal) / 90;
+  const y = (window.innerHeight - event.pageY * settings.parallaxVal) / 90;
 
-  document.addEventListener("mousemove", function (event) {
-    targetX = (window.innerWidth  - event.pageX * settings.parallaxVal * settings.parallaxStrength) / settings.parallaxDistance;
-    targetY = (window.innerHeight - event.pageY * settings.parallaxVal * settings.parallaxStrength) / settings.parallaxDistance;
-  });
-
-  function animateParallax() {
-    const dx = targetX - currentX;
-    const dy = targetY - currentY;
-    const speed = Math.hypot(dx, dy);
-    const damp = Math.min(0.35, settings.parallaxDamp + speed * 0.012);
-
-    currentX += dx * damp;
-    currentY += dy * damp;
-
-    container.style.transform =
-      `translateX(${currentX}px) translateY(${currentY}px) scale(1.06)`;
-
-    requestAnimationFrame(animateParallax);
-  }
-
-  animateParallax();
-}
+  container.style.transform = `translateX(${x}px) translateY(${y}px) scale(1.09)`;
+});
 
 //helpers
 function getExtension(filePath) {

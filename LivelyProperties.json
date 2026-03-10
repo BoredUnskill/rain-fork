@@ -36,7 +36,7 @@
   },
   "mediaSelect": {
     "type": "folderDropdown",
-    "value": "image.jpg",
+    "value": "mountain-surrounded-with-fog-1772973.jpg",
     "text": "Background (.jpg, .png, .webm)",
     "filter": "*.jpg|*.jpeg|*.png|*.webm",
     "folder": "media"
@@ -61,40 +61,16 @@
     "value": 50
   },
   "parallaxIntensity": {
-    "max": 7,
+    "max": 5,
     "min": 0,
     "text": "Parallax",
     "type": "slider",
     "value": 1
   },
-  "parallaxStrength": {
-    "max": 1,
-    "min": 0.20,
-    "step": 0.1,
-    "text": "Mouse Sensitivity",
-    "type": "slider",
-    "value": 1
-  },
-  "parallaxDistance": {
-    "max": 110,
-    "min": 50,
-    "step": 5,
-    "text": "Distance",
-    "type": "slider",
-    "value": 90
-  },
-  "parallaxDamp": {
-    "max": 1,
-    "min": 0.07,
-    "step": 0.1,
-    "text": "Damping",
-    "type": "slider",
-    "value": 1
-  },
   "displayScaling": {
-    "max": 2,
+    "max": 1,
     "min": 0.1,
-    "step": 0.01,
+    "step": 0.1,
     "text": "Scaling",
     "type": "slider",
     "value": 1
@@ -123,5 +99,11 @@
     "type": "checkbox",
     "value": false,
     "text": "Debug"
+  },
+  "timeFormat": {
+    "type": "dropdown",
+    "value": 0,
+    "text": "Time Format",
+    "items": ["24-hour", "12-hour (AM/PM)"]
   }
 }
